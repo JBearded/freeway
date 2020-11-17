@@ -38,6 +38,7 @@ type WebsocketInfo struct {
 // HTTPInfo http服务器配置
 type HTTPInfo struct {
 	Port string `yaml:"port"`
+	AllowOrigin string `yaml:"allowOrigin"`
 }
 
 // DatabaseInfo 数据库配置

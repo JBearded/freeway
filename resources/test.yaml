@@ -1,0 +1,14 @@
+server:
+  websocket:
+    port: 8080
+    readBufferSize: 1024
+    writeBufferSize: 1024
+    allowOrigin: "^(http|https)://(\\w+)\\.github\\.com"
+  http:
+    port: 8888
+database:
+  default:
+    host: 127.0.0.1
+logger:
+  path: "/log/freeway/info.log"
+  level: debug

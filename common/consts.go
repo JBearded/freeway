@@ -4,6 +4,9 @@ import (
 	"strings"
 )
 
+// Profile type
+type Profile string
+
 const (
 	// NoneProfile Profile
 	NoneProfile Profile = "none"
@@ -39,4 +42,16 @@ func ParseProfile(profileName string) Profile {
 		return ProductionProfile
 	}
 	return NoneProfile
+}
+
+var contentTypeMap map[string]string = map[string]string{
+	"json": "application/json",
+}
+
+// GetContentType 获取contentType
+func GetContentType(key string) string {
+	if key == "" {
+		return ""
+	}
+	return contentTypeMap[key]
 }

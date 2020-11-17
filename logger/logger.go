@@ -24,13 +24,12 @@ func Init(profile common.Profile) error {
 		return err
 	}
 	level, _ := log.ParseLevel(config.Get().Logger.Level)
-	log.SetOutput(file)
 
-	// if profile == common.DevelopPorfile || profile == common.NoneProfile {
-	// 	log.SetOutput(os.Stdout)
-	// } else {
-	// 	log.SetOutput(file)
-	// }
+	if profile == common.DevelopPorfile || profile == common.NoneProfile {
+		log.SetOutput(os.Stdout)
+	} else {
+		log.SetOutput(file)
+	}
 	log.SetLevel(level)
 	log.SetReportCaller(true)
 	log.SetFormatter(&log.JSONFormatter{})
