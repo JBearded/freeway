@@ -2,10 +2,12 @@ package server
 
 import (
 	"freeway/common"
+	"freeway/config"
 	"net/http"
 	"regexp"
 	"strings"
 	"time"
+
 	"github.com/petermattis/goid"
 	log "github.com/sirupsen/logrus"
 )
@@ -31,14 +33,17 @@ func Start(port string, handlerMethod func(http.ResponseWriter, *http.Request)) 
 		MaxHeaderBytes: 1 << 20,
 	}
 	defer server.Close()
-	server.ListenAndServe()
+	err := server.ListenAndServe()
+	if err != nil {
+		log.Fatal("start server error, port:"+port+" ", err)
+	}
 }
 
 //RunHTTPServer 运行http服务
 func RunHTTPServer(w http.ResponseWriter, r *http.Request) {
 	goID := goid.Get()
 	log.Info("http request go id:", goID)
-	url := r.URL.String()
+	url := r.URL.Path
 	pathReg, _ := regexp.Compile("(?:\\/([^?#]*))?")
 	path := string(pathReg.Find([]byte(url)))
 	values := strings.Split(path, ".")
@@ -64,6 +69,20 @@ func RunHTTPServer(w http.ResponseWriter, r *http.Request) {
 	}
 	if contentType := common.GetContentType(suffix); contentType != "" {
 		w.Header().Set("Content-Type", contentType)
+	}
+	//跨域支持
+	crossReg, _ := regexp.Compile(config.Get().Server.HTTP.AllowOrigin)
+	origin := r.Header.Get("Origin")
+	referer := r.Header.Get("Referer")
+	var crossURL string = referer
+	if origin != "" {
+		crossURL = origin
+	}
+	if crossReg.Match([]byte(crossURL)) {
+		w.Header().Add("Access-Control-Allow-Headers", "X-Requested-With")
+		w.Header().Add("Access-Control-Allow-Credentials", "true")
+		w.Header().Add("Access-Control-Allow-Methods", "GET,POST")
+		w.Header().Add("Access-Control-Allow-Origin", crossURL)
 	}
 	rt.handler(w, r)
 }

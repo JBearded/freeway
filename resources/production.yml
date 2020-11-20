@@ -1,6 +1,7 @@
 server:
   websocket:
     port: 8080
+    pingPeriodSeconds: 60
     readBufferSize: 1024
     writeBufferSize: 1024
     allowOrigin: "^(http|https)://(\\w+)\\.github\\.com"

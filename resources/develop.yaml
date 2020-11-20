@@ -1,12 +1,13 @@
 server:
   websocket:
     port: 8080
+    pingPeriodSeconds: 60
     readBufferSize: 1024
     writeBufferSize: 1024
     allowOrigin: "(.*)"
   http:
     port: 8888
-    allowOrigin: "^(http|https)://(\\w+)\\.yy\\.com$"
+    allowOrigin: "^(http|https)://(\\w+)\\.yy\\.com"
 database:
   default:
     host: 127.0.0.1

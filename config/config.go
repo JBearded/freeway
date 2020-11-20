@@ -3,6 +3,7 @@ package config
 import (
 	"freeway/common"
 	"io/ioutil"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
@@ -29,15 +30,16 @@ type Configure struct {
 
 // WebsocketInfo websocket服务器配置
 type WebsocketInfo struct {
-	Port            string `yaml:"port"`
-	ReadBufferSize  string `yaml:"readBufferSize"`
-	WriteBufferSize string `yaml:"writeBufferSize"`
-	AllowOrigin     string `yaml:"allowOrigin"`
+	Port              string        `yaml:"port"`
+	PingPeriodSeconds time.Duration `yaml:"pingPeriodSeconds"`
+	ReadBufferSize    int        `yaml:"readBufferSize"`
+	WriteBufferSize   int        `yaml:"writeBufferSize"`
+	AllowOrigin       string        `yaml:"allowOrigin"`
 }
 
 // HTTPInfo http服务器配置
 type HTTPInfo struct {
-	Port string `yaml:"port"`
+	Port        string `yaml:"port"`
 	AllowOrigin string `yaml:"allowOrigin"`
 }
 

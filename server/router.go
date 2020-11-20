@@ -16,21 +16,45 @@ type router struct {
 
 // Routers http接口配置
 var Routers map[string]*router = map[string]*router{
-	"/hello": {
+	"/websocket/info": {
 		method:  http.MethodGet,
-		handler: hello,
+		handler: websocketInfo,
+	},
+	"/websocket/push": {
+		method:  http.MethodGet,
+		handler: websocketPush,
 	},
 	"/api": {
-		method:  http.MethodPost,
+		method:  http.MethodGet,
 		handler: api,
 	},
 }
 
-func hello(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello"))
+func websocketInfo(w http.ResponseWriter, r *http.Request) {
+	appID := r.URL.Query().Get("appId")
+	manager := GetGlobalWsManager()
+	result := make(map[string]string)
+	for connID := range manager.apps[appID].conns {
+		client := manager.apps[appID].conns[connID]
+		result[connID] = client.String()
+	}
+	data, _ := json.Marshal(result)
+	w.Write(data)
 }
 
-
+func websocketPush(w http.ResponseWriter, r *http.Request) {
+	appID := r.URL.Query().Get("appId")
+	connID := r.URL.Query().Get("connId")
+	message := r.URL.Query().Get("message")
+	manager := GetGlobalWsManager()
+	client := manager.apps[appID].conns[connID]
+	if client == nil {
+		w.Write([]byte("nil"))
+	} else {
+		client.push(message)
+		w.Write([]byte("ok"))
+	}
+}
 
 func api(w http.ResponseWriter, r *http.Request) {
 	body, readBodyErr := ioutil.ReadAll(r.Body)
